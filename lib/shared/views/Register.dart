@@ -39,11 +39,49 @@ class _RegisterState extends State<Register> {
     super.dispose();
   }
 
+  // Validación de email usando expresión regular simple
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  // Validación de URL simple (http/https)
+  bool _isValidUrl(String url) {
+    final urlRegex = RegExp(
+      r'^(https?:\/\/)?' // protocolo opcional
+      r'([\da-z\.-]+)\.([a-z\.]{2,6})' // dominio
+      r'([\/\w \.-]*)*\/?$' // ruta
+    );
+    return urlRegex.hasMatch(url);
+  }
+
   void _registerAndLogin(BuildContext context) {
     if (pass1Controller.text != pass2Controller.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Las contraseñas no coinciden'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Validación de correo electrónico
+    if (!_isValidEmail(mailController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Correo electrónico no válido'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Validación de URL de foto de perfil (si no está vacío)
+    if (urlPfpController.text.isNotEmpty && !_isValidUrl(urlPfpController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('URL de foto de perfil no válida'),
           backgroundColor: Colors.red,
         ),
       );
